@@ -5,6 +5,16 @@ Source of truth for conventions, structure, and commands.
 
 ---
 
+## Git Workflow
+
+- Always create a branch before starting a feature or bug fix
+  - Feature: `git checkout -b feature/<name>` (e.g. `feature/authentication`)
+  - Bug fix: `git checkout -b fix/<name>`
+- All work for that feature stays on that branch for the remainder of the session
+- Merge back to `main` only after end-to-end verification is complete
+
+---
+
 ## Tech Stack
 
 | Layer | Technology | Version |
@@ -77,9 +87,9 @@ When IntelliJ is not available, use the Maven wrapper from the `backend/` direct
 ### application.properties — required local setup
 Configure before first run. Do not commit credentials.
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/workout_tracking?useSSL=false&serverTimezone=UTC
-spring.datasource.username=<mysql-user>
-spring.datasource.password=<mysql-password>
+spring.datasource.url=jdbc:mysql://localhost:3306/workout_tracking?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+spring.datasource.username=root
+spring.datasource.password=1611
 spring.jpa.hibernate.ddl-auto=validate
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 spring.flyway.enabled=true
@@ -157,19 +167,16 @@ Rules:
 
 ### Testing strategy
 
-| Type | Annotation | Scope |
-|------|-----------|-------|
-| Unit | `@ExtendWith(MockitoExtension.class)` | Service classes |
-| Controller | `@WebMvcTest` | Controller classes |
-| Repository | `@DataJpaTest` (H2 in-memory) | Repository interfaces |
+Unit tests are written manually by the developer — do not generate test files unless explicitly asked.
 
 ### Common gotchas — Backend
 - **JJWT 0.12.x**: use `.subject()`, `.issuedAt()`, `.expiration()` (not `set*()` variants); parse with `Jwts.parser().verifyWith(key).build().parseSignedClaims(token)`
-- **MapStruct + Lombok order**: Lombok processor must come before MapStruct in `maven-compiler-plugin` annotation processor paths
+- **MapStruct + Lombok order**: Lombok processor must come before MapStruct in `maven-compiler-plugin` annotation processor paths; if MapStruct bean is missing at runtime, run `mvnw clean` — a prior failed compile may have left `*MapperImpl` ungenerated
 - **ddl-auto=validate**: never change to `create` or `update`
 - **Bodyweight exercises**: `weight_kg` / `actual_weight_kg` are nullable — never assume non-null
 - **Ownership check**: every service method operating on user data must call `assertOwnership(resource.userId, currentUserId)` before proceeding
 - **Snapshot fields**: log name snapshot columns preserve history when plans/exercises are deleted — always populate them at log creation time
+- **DaoAuthenticationProvider (Spring Boot 4)**: no-arg constructor removed — use `new DaoAuthenticationProvider(userDetailsService)` and call only `setPasswordEncoder()`; `setUserDetailsService()` no longer exists
 
 ---
 

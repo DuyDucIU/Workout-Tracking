@@ -9,10 +9,10 @@ Status: `[ ]` = todo · `[x]` = done · `[~]` = in progress
 
 **Backend wiring before any feature can be built.**
 
-- [ ] Fix `pom.xml`: replace non-standard test starters with `spring-boot-starter-test`; add JJWT 0.12.6 (`jjwt-api`, `jjwt-impl`, `jjwt-jackson`); add MapStruct 1.6.3 + `mapstruct-processor`; add H2 (test scope); add `mapstruct-processor` to annotation processor paths (after Lombok)
-- [ ] Configure `application.properties`: datasource (MySQL), JPA (`ddl-auto=validate`), Flyway, JWT secret/expiry, SpringDoc paths
-- [ ] Create `V1__create_schema.sql`: all 8 tables (`users`, `refresh_tokens`, `exercises`, `workout_plans`, `workout_sessions`, `session_exercises`, `workout_logs`, `workout_log_entries`)
-- [ ] Create `V2__seed_exercises.sql`: ~35 exercises across all categories/muscle groups (`is_system=TRUE`)
+- [x] Fix `pom.xml`: replace non-standard test starters with `spring-boot-starter-test`; add JJWT 0.12.6 (`jjwt-api`, `jjwt-impl`, `jjwt-jackson`); add MapStruct 1.6.3 + `mapstruct-processor`; add H2 (test scope); add `mapstruct-processor` to annotation processor paths (after Lombok)
+- [x] Configure `application.properties`: datasource (MySQL), JPA (`ddl-auto=validate`), Flyway, JWT secret/expiry, SpringDoc paths
+- [x] Create `V1__create_schema.sql`: all 8 tables (`users`, `refresh_tokens`, `exercises`, `workout_plans`, `workout_sessions`, `session_exercises`, `workout_logs`, `workout_log_entries`)
+- [x] Create `V2__seed_exercises.sql`: ~35 exercises across all categories/muscle groups (`is_system=TRUE`)
 - [ ] Verify: app starts, Flyway runs V1+V2 cleanly, Swagger UI loads at `/swagger-ui.html`
 
 ---
@@ -20,47 +20,47 @@ Status: `[ ]` = todo · `[x]` = done · `[~]` = in progress
 ## Feature 1 — Authentication
 
 ### Backend
-- [ ] Enums: `UnitPreference`, `ExerciseCategory`, `MuscleGroup`, `WorkoutDayOfWeek`
-- [ ] `User` entity + `RefreshToken` entity (Lombok, JPA)
-- [ ] `UserRepository` (`findByEmail`, `existsByEmail`, `existsByUsername`)
-- [ ] `RefreshTokenRepository` (`findByToken`, `deleteByUserId`)
-- [ ] `JwtConfig` — `@ConfigurationProperties("jwt")` binding secret + expiry
-- [ ] `JwtService` — generate access token (15min) + refresh token (7d), validate, extract claims; store `userId` as custom claim; derive `SecretKey` with `Keys.hmacShaKeyFor`
-- [ ] `CustomUserDetailsService` — load user by email
-- [ ] `JwtAuthenticationFilter` — `OncePerRequestFilter`, reads Bearer token, sets `SecurityContextHolder`
-- [ ] `SecurityConfig` — stateless, CSRF off, CORS (`http://localhost:5173`), permit public paths, add JWT filter before `UsernamePasswordAuthenticationFilter`; expose `AuthenticationManager` + `BCryptPasswordEncoder` beans
-- [ ] `OpenApiConfig` — register JWT bearer auth scheme so Swagger UI supports Authorize button
-- [ ] `AuthService` — register (uniqueness check, bcrypt), login (authenticate, issue tokens, store hashed refresh token), refresh (validate hash, rotate token), logout (revoke token)
-- [ ] `AuthController` — `POST /api/v1/auth/{register,login,refresh,logout}`
-- [ ] DTOs: `RegisterRequest`, `LoginRequest`, `RefreshRequest`, `LogoutRequest`, `AuthResponse`
-- [ ] `GlobalExceptionHandler` + exception classes (`ResourceNotFoundException`, `AccessDeniedException`, `DuplicateResourceException`, `InvalidTokenException`) + `ErrorResponse`
-- [ ] `UserService` — `getMe`, `updateMe`, `changePassword`
-- [ ] `UserController` — `GET/PATCH /api/v1/users/me`, `PUT /api/v1/users/me/password`
-- [ ] Unit tests: `AuthService` (Mockito), `@WebMvcTest` for `AuthController`
+- [x] Enums: `UnitPreference`, `ExerciseCategory`, `MuscleGroup`, `WorkoutDayOfWeek`
+- [x] `User` entity + `RefreshToken` entity (Lombok, JPA)
+- [x] `UserRepository` (`findByEmail`, `existsByEmail`, `existsByUsername`)
+- [x] `RefreshTokenRepository` (`findByToken`, `deleteByUserId`)
+- [x] `JwtConfig` — `@ConfigurationProperties("jwt")` binding secret + expiry
+- [x] `JwtService` — generate access token (15min) + refresh token (7d), validate, extract claims; store `userId` as custom claim; derive `SecretKey` with `Keys.hmacShaKeyFor`
+- [x] `CustomUserDetailsService` — load user by email
+- [x] `JwtAuthenticationFilter` — `OncePerRequestFilter`, reads Bearer token, sets `SecurityContextHolder`
+- [x] `SecurityConfig` — stateless, CSRF off, CORS (`http://localhost:5173`), permit public paths, add JWT filter before `UsernamePasswordAuthenticationFilter`; expose `AuthenticationManager` + `BCryptPasswordEncoder` beans
+- [x] `OpenApiConfig` — register JWT bearer auth scheme so Swagger UI supports Authorize button
+- [x] `AuthService` — register (uniqueness check, bcrypt), login (authenticate, issue tokens, store hashed refresh token), refresh (validate hash, rotate token), logout (revoke token)
+- [x] `AuthController` — `POST /api/v1/auth/{register,login,refresh,logout}`
+- [x] DTOs: `RegisterRequest`, `LoginRequest`, `RefreshRequest`, `LogoutRequest`, `AuthResponse`
+- [x] `GlobalExceptionHandler` + exception classes (`ResourceNotFoundException`, `AccessDeniedException`, `DuplicateResourceException`, `InvalidTokenException`) + `ErrorResponse`
+- [x] `UserService` — `getMe`, `updateMe`, `changePassword`
+- [x] `UserController` — `GET/PATCH /api/v1/users/me`, `PUT /api/v1/users/me/password`
+- [x] Unit tests: `AuthService` (Mockito), `@WebMvcTest` for `AuthController`
 
 ### Frontend
-- [ ] Install all dependencies: Tailwind + `@tailwindcss/vite`, shadcn/ui (init), `react-router-dom`, `@tanstack/react-query`, `@tanstack/react-query-devtools`, `zustand`, `axios`, `recharts`, `react-hook-form`, `@hookform/resolvers`, `zod`, `lucide-react`
-- [ ] `vite.config.ts`: add Tailwind plugin + proxy `/api → http://localhost:8080`
-- [ ] `src/index.css`: Tailwind directives + shadcn CSS variables (light + dark, sky/emerald accent)
-- [ ] Remove all Vite boilerplate (App.css, template assets, placeholder content in App.tsx)
-- [ ] `src/store/authStore.ts` — Zustand: `accessToken`, `user`, `setAuth`, `clearAuth`
-- [ ] `src/store/themeStore.ts` — Zustand + persist: `'light' | 'dark'`, `toggleTheme`; apply `dark` class to `<html>`
-- [ ] `src/lib/api.ts` — Axios instance; request interceptor attaches `Authorization: Bearer`; response interceptor: 401 → silent refresh → retry (queue concurrent 401s with `isRefreshing` flag); on refresh failure → `clearAuth()` + redirect `/login`
-- [ ] `src/lib/queryClient.ts` — TanStack Query client
-- [ ] `src/lib/utils.ts` — `cn()` + `kgToLbs` / `lbsToKg`
-- [ ] `src/types/auth.ts`, `src/types/user.ts`
-- [ ] `src/router/ProtectedRoute.tsx` — redirect to `/login` if no `accessToken` in store
-- [ ] `src/main.tsx` — `QueryClientProvider` + `RouterProvider`
-- [ ] `src/App.tsx` — route definitions; public routes: `/login`, `/register`; protected: all others
-- [ ] `components/shared/ThemeToggle.tsx`
-- [ ] `components/shared/LoadingSpinner.tsx`, `ErrorMessage.tsx`
-- [ ] `components/layout/AuthLayout.tsx` — centered card layout
-- [ ] `components/layout/Sidebar.tsx`, `TopBar.tsx`, `AppLayout.tsx` — app shell (nav + theme toggle + user menu with logout)
-- [ ] `components/auth/LoginForm.tsx` — email + password, Zod schema, react-hook-form
-- [ ] `components/auth/RegisterForm.tsx` — email + username + password + confirm
-- [ ] `hooks/useAuth.ts` — login/register mutations, logout, current user query
-- [ ] `pages/LoginPage.tsx`, `pages/RegisterPage.tsx`
-- [ ] `pages/DashboardPage.tsx` — placeholder "Welcome" page (will be filled in Feature 5)
+- [x] Install all dependencies: Tailwind + `@tailwindcss/vite`, shadcn/ui (init), `react-router-dom`, `@tanstack/react-query`, `@tanstack/react-query-devtools`, `zustand`, `axios`, `recharts`, `react-hook-form`, `@hookform/resolvers`, `zod`, `lucide-react`
+- [x] `vite.config.ts`: add Tailwind plugin + proxy `/api → http://localhost:8080`
+- [x] `src/index.css`: Tailwind directives + shadcn CSS variables (light + dark, sky/emerald accent)
+- [x] Remove all Vite boilerplate (App.css, template assets, placeholder content in App.tsx)
+- [x] `src/store/authStore.ts` — Zustand: `accessToken`, `user`, `setAuth`, `clearAuth`
+- [x] `src/store/themeStore.ts` — Zustand + persist: `'light' | 'dark'`, `toggleTheme`; apply `dark` class to `<html>`
+- [x] `src/lib/api.ts` — Axios instance; request interceptor attaches `Authorization: Bearer`; response interceptor: 401 → silent refresh → retry (queue concurrent 401s with `isRefreshing` flag); on refresh failure → `clearAuth()` + redirect `/login`
+- [x] `src/lib/queryClient.ts` — TanStack Query client
+- [x] `src/lib/utils.ts` — `cn()` + `kgToLbs` / `lbsToKg`
+- [x] `src/types/auth.ts`, `src/types/user.ts`
+- [x] `src/router/ProtectedRoute.tsx` — redirect to `/login` if no `accessToken` in store
+- [x] `src/main.tsx` — `QueryClientProvider` + `RouterProvider`
+- [x] `src/App.tsx` — route definitions; public routes: `/login`, `/register`; protected: all others
+- [x] `components/shared/ThemeToggle.tsx`
+- [x] `components/shared/LoadingSpinner.tsx`, `ErrorMessage.tsx`
+- [x] `components/layout/AuthLayout.tsx` — centered card layout
+- [x] `components/layout/Sidebar.tsx`, `TopBar.tsx`, `AppLayout.tsx` — app shell (nav + theme toggle + user menu with logout)
+- [x] `components/auth/LoginForm.tsx` — email + password, Zod schema, react-hook-form
+- [x] `components/auth/RegisterForm.tsx` — email + username + password + confirm
+- [x] `hooks/useAuth.ts` — login/register mutations, logout, current user query
+- [x] `pages/LoginPage.tsx`, `pages/RegisterPage.tsx`
+- [x] `pages/DashboardPage.tsx` — placeholder "Welcome" page (will be filled in Feature 5)
 
 ### Verify Feature 1
 - [ ] Register a new user → 201, tokens returned
