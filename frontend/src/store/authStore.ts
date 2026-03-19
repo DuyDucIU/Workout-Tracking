@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { UserDto } from '@/types/user'
 
 interface AuthState {
@@ -10,16 +11,23 @@ interface AuthState {
   clearAuth: () => void
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  accessToken: null,
-  refreshToken: null,
-  user: null,
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      refreshToken: null,
+      user: null,
 
-  setAuth: (accessToken, refreshToken, user) =>
-    set({ accessToken, refreshToken, user }),
+      setAuth: (accessToken, refreshToken, user) =>
+        set({ accessToken, refreshToken, user }),
 
-  updateUser: (user) => set({ user }),
+      updateUser: (user) => set({ user }),
 
-  clearAuth: () =>
-    set({ accessToken: null, refreshToken: null, user: null }),
-}))
+      clearAuth: () =>
+        set({ accessToken: null, refreshToken: null, user: null }),
+    }),
+    {
+      name: 'workout-auth',
+    }
+  )
+)

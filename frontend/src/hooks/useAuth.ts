@@ -43,7 +43,6 @@ export function useRegister() {
 
 export function useLogout() {
   const { refreshToken, clearAuth } = useAuthStore()
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -57,7 +56,6 @@ export function useLogout() {
     onSettled: () => {
       clearAuth()
       queryClient.clear()
-      navigate('/login')
     },
   })
 }
