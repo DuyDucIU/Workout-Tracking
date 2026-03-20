@@ -1,102 +1,178 @@
+import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { Link } from 'react-router-dom'
 import { useLogin } from '@/hooks/useAuth'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { ErrorMessage } from '@/components/shared/ErrorMessage'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 
-const schema = z.object({
-  email: z.string().email('Please enter a valid email'),
+const loginSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
   password: z.string().min(1, 'Password is required'),
 })
 
-type FormValues = z.infer<typeof schema>
+type LoginFormValues = z.infer<typeof loginSchema>
 
 export function LoginForm() {
   const login = useLogin()
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   })
 
-  const serverError = login.error
-    ? (login.error as { response?: { data?: { message?: string } } })
-        .response?.data?.message ?? 'Invalid email or password'
-    : undefined
+  const onSubmit = (values: LoginFormValues) => {
+    login.mutate(values)
+  }
+
+  const inputClass =
+    'w-full rounded-xl py-4 pl-12 pr-4 text-sm outline-none transition-all placeholder:opacity-50'
 
   return (
-    <Card className="shadow-sm">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to your account</CardDescription>
-      </CardHeader>
+    <>
+      {/* Card heading */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold tracking-tight" style={{ color: '#dae2fd' }}>
+          Welcome Back
+        </h2>
+        <p className="text-sm mt-1" style={{ color: '#bec8d2' }}>
+          Access your personalized training metrics
+        </p>
+      </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit((v) => login.mutate(v))}>
-          <CardContent className="space-y-4">
-            <ErrorMessage message={serverError} />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="you@example.com"
-                      autoComplete="email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      autoComplete="current-password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-
-          <CardFooter className="flex flex-col gap-3">
-            <Button
-              type="submit"
-              className="w-full bg-sky-500 hover:bg-sky-600 text-white"
-              disabled={login.isPending}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Server error */}
+          {login.error && (
+            <div
+              className="rounded-lg p-3 text-sm border"
+              style={{
+                backgroundColor: 'rgba(147,0,10,0.3)',
+                color: '#ffdad6',
+                borderColor: 'rgba(255,180,171,0.2)',
+              }}
             >
-              {login.isPending ? 'Signing in…' : 'Sign in'}
-            </Button>
-            <p className="text-sm text-muted-foreground text-center">
-              Don't have an account?{' '}
-              <Link to="/register" className="text-sky-600 hover:underline font-medium">
-                Sign up
-              </Link>
-            </p>
-          </CardFooter>
+              {(login.error as { message?: string })?.message ?? 'Login failed. Please try again.'}
+            </div>
+          )}
+
+          {/* Email */}
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel
+                  className="block text-xs font-bold uppercase tracking-widest mb-2 ml-1"
+                  style={{ color: '#bec8d2' }}
+                >
+                  Email Address
+                </FormLabel>
+                <FormControl>
+                  <div className="relative group">
+                    <span
+                      className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg pointer-events-none transition-colors text-[#88929b] group-focus-within:text-[#89ceff]"
+                    >
+                      mail
+                    </span>
+                    <input
+                      {...field}
+                      type="email"
+                      placeholder="alex.rivera@pro.com"
+                      className={inputClass}
+                      style={{ backgroundColor: '#060e20', color: '#dae2fd' }}
+                    />
+                    <div
+                      className="absolute bottom-0 left-0 h-[2px] w-0 group-focus-within:w-full transition-all duration-300 rounded-full"
+                      style={{ backgroundColor: '#89ceff' }}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage className="text-xs mt-1" style={{ color: '#ffb4ab' }} />
+              </FormItem>
+            )}
+          />
+
+          {/* Password */}
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex justify-between items-center mb-2 px-1">
+                  <FormLabel
+                    className="text-xs font-bold uppercase tracking-widest"
+                    style={{ color: '#bec8d2' }}
+                  >
+                    Password
+                  </FormLabel>
+                  <a
+                    href="#"
+                    className="text-xs font-bold uppercase tracking-tighter hover:opacity-80 transition-opacity"
+                    style={{ color: '#89ceff' }}
+                  >
+                    Forgot password?
+                  </a>
+                </div>
+                <FormControl>
+                  <div className="relative group">
+                    <span
+                      className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg pointer-events-none transition-colors text-[#88929b] group-focus-within:text-[#89ceff]"
+                    >
+                      lock
+                    </span>
+                    <input
+                      {...field}
+                      type="password"
+                      placeholder="••••••••••••"
+                      className={inputClass}
+                      style={{ backgroundColor: '#060e20', color: '#dae2fd' }}
+                    />
+                    <div
+                      className="absolute bottom-0 left-0 h-[2px] w-0 group-focus-within:w-full transition-all duration-300 rounded-full"
+                      style={{ backgroundColor: '#89ceff' }}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage className="text-xs mt-1" style={{ color: '#ffb4ab' }} />
+              </FormItem>
+            )}
+          />
+
+          {/* Submit */}
+          <div className="pt-4">
+            <button
+              type="submit"
+              disabled={login.isPending}
+              className="w-full rounded-xl py-4 font-black uppercase tracking-tight flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60 shadow-lg hover:brightness-110 hover:shadow-[0_8px_25px_rgba(14,165,233,0.45)] cursor-pointer"
+              style={{ background: 'linear-gradient(to bottom right, #89ceff, #0ea5e9)', color: '#00344d' }}
+            >
+              {login.isPending ? 'Signing In...' : 'Sign In'}
+              <span className="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </div>
         </form>
       </Form>
-    </Card>
+
+      {/* Register link */}
+      <div className="mt-10 pt-8 border-t text-center" style={{ borderColor: 'rgba(62,72,80,0.1)' }}>
+        <p className="text-sm" style={{ color: '#bec8d2' }}>
+          Don't have an account?{' '}
+          <Link
+            to="/register"
+            className="font-bold hover:underline underline-offset-4 ml-1"
+            style={{ color: '#89ceff' }}
+          >
+            Register
+          </Link>
+        </p>
+      </div>
+    </>
   )
 }

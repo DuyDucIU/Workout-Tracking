@@ -9,9 +9,11 @@ import { DashboardPage } from '@/pages/DashboardPage'
 export default function App() {
   return (
     <Routes>
-      {/* Public routes */}
+      {/* Login — standalone full-page layout */}
+      <Route path="/login" element={<LoginPage />} />
+
+      {/* Register — still wrapped in AuthLayout */}
       <Route element={<AuthLayout />}>
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Route>
 
