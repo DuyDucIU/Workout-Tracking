@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link } from 'react-router-dom'
+import type { AxiosError } from 'axios'
 import { useLogin } from '@/hooks/useAuth'
 import {
   Form,
@@ -58,7 +59,9 @@ export function LoginForm() {
                 borderColor: 'rgba(255,180,171,0.2)',
               }}
             >
-              {(login.error as { message?: string })?.message ?? 'Login failed. Please try again.'}
+              {(login.error as AxiosError<{ message?: string }>)?.response?.data?.message
+                ?? (login.error as AxiosError)?.message
+                ?? 'Login failed. Please try again.'}
             </div>
           )}
 
