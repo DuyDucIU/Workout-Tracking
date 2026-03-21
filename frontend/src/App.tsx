@@ -5,6 +5,15 @@ import { LoginPage } from '@/pages/LoginPage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 
+function PlaceholderPage({ title }: { title: string }) {
+  return (
+    <div className="px-16 py-12">
+      <h1 className="text-2xl font-black tracking-tight" style={{ color: '#dae2fd' }}>{title}</h1>
+      <p className="mt-2 text-sm" style={{ color: '#bec8d2' }}>Coming soon.</p>
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <Routes>
@@ -18,6 +27,11 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/" element={<DashboardPage />} />
+          <Route path="/plans" element={<PlaceholderPage title="Workouts" />} />
+          <Route path="/log" element={<PlaceholderPage title="Log Workout" />} />
+          <Route path="/history" element={<PlaceholderPage title="History" />} />
+          <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
+          <Route path="/profile" element={<PlaceholderPage title="Profile" />} />
         </Route>
       </Route>
 
