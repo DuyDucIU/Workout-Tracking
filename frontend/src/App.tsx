@@ -4,6 +4,9 @@ import { AppLayout } from '@/components/layout/AppLayout'
 import { LoginPage } from '@/pages/LoginPage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { DashboardPage } from '@/pages/DashboardPage'
+import { PlansPage } from '@/pages/PlansPage'
+import { CreatePlanPage } from '@/pages/CreatePlanPage'
+import { PlanDetailPage } from '@/pages/PlanDetailPage'
 
 function PlaceholderPage({ title }: { title: string }) {
   return (
@@ -27,7 +30,9 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/" element={<DashboardPage />} />
-          <Route path="/plans" element={<PlaceholderPage title="Workouts" />} />
+          <Route path="/plans" element={<PlansPage />} />
+          <Route path="/plans/new" element={<CreatePlanPage />} />
+          <Route path="/plans/:id" element={<PlanDetailPage />} />
           <Route path="/log" element={<PlaceholderPage title="Log Workout" />} />
           <Route path="/history" element={<PlaceholderPage title="History" />} />
           <Route path="/reports" element={<PlaceholderPage title="Reports" />} />

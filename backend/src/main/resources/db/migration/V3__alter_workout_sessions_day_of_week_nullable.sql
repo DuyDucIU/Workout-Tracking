@@ -1,0 +1,2 @@
+ALTER TABLE workout_sessions
+    MODIFY day_of_week ENUM ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY') NULL;

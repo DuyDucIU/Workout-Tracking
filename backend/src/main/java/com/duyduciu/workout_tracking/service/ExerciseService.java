@@ -21,7 +21,7 @@ public class ExerciseService {
     private final ExerciseMapper exerciseMapper;
 
     public Page<ExerciseDto> list(ExerciseCategory category, MuscleGroup muscleGroup, String search, Pageable pageable) {
-        Specification<Exercise> spec = Specification.where((Specification<Exercise>) null);
+        Specification<Exercise> spec = (root, query, cb) -> cb.conjunction();
 
         if (category != null) {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("category"), category));
