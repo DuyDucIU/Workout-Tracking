@@ -3,11 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
 import { useRegister } from '@/hooks/useAuth'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { ErrorMessage } from '@/components/shared/ErrorMessage'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 
 const schema = z
   .object({
@@ -26,6 +22,9 @@ const schema = z
 
 type FormValues = z.infer<typeof schema>
 
+const inputBase =
+  'w-full rounded-lg py-4 px-4 text-sm outline-none border-none transition-all placeholder:opacity-50'
+
 export function RegisterForm() {
   const register = useRegister()
 
@@ -40,106 +39,181 @@ export function RegisterForm() {
     : undefined
 
   return (
-    <Card className="shadow-sm">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-xl">Create an account</CardTitle>
-        <CardDescription>Start tracking your workouts today</CardDescription>
-      </CardHeader>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit((v) => register.mutate(v))} className="space-y-5">
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit((v) => register.mutate(v))}>
-          <CardContent className="space-y-4">
-            <ErrorMessage message={serverError} />
+        {/* Username */}
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <label
+                className="block text-xs font-bold uppercase tracking-widest mb-2 ml-1"
+                style={{ color: '#bec8d2' }}
+              >
+                Username
+              </label>
+              <FormControl>
+                <div className="relative group">
+                  <input
+                    {...field}
+                    type="text"
+                    placeholder="johndoe"
+                    autoComplete="username"
+                    className={inputBase}
+                    style={{ backgroundColor: '#060e20', color: '#dae2fd' }}
+                  />
+                  <div
+                    className="absolute bottom-0 left-0 h-[2px] w-0 group-focus-within:w-full transition-all duration-300 rounded-full"
+                    style={{ backgroundColor: '#89ceff' }}
+                  />
+                </div>
+              </FormControl>
+              <FormMessage className="text-xs mt-1" style={{ color: '#ffb4ab' }} />
+            </FormItem>
+          )}
+        />
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="you@example.com"
-                      autoComplete="email"
+        {/* Email */}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <label
+                className="block text-xs font-bold uppercase tracking-widest mb-2 ml-1"
+                style={{ color: '#bec8d2' }}
+              >
+                Email Address
+              </label>
+              <FormControl>
+                <div className="relative group">
+                  <input
+                    {...field}
+                    type="email"
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    className={inputBase}
+                    style={{ backgroundColor: '#060e20', color: '#dae2fd' }}
+                  />
+                  <div
+                    className="absolute bottom-0 left-0 h-[2px] w-0 group-focus-within:w-full transition-all duration-300 rounded-full"
+                    style={{ backgroundColor: '#89ceff' }}
+                  />
+                </div>
+              </FormControl>
+              <FormMessage className="text-xs mt-1" style={{ color: '#ffb4ab' }} />
+            </FormItem>
+          )}
+        />
+
+        {/* Password + Confirm Password — 2-column grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <label
+                  className="block text-xs font-bold uppercase tracking-widest mb-2 ml-1"
+                  style={{ color: '#bec8d2' }}
+                >
+                  Password
+                </label>
+                <FormControl>
+                  <div className="relative group">
+                    <input
                       {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input placeholder="johndoe" autoComplete="username" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
                       type="password"
                       placeholder="••••••••"
                       autoComplete="new-password"
-                      {...field}
+                      className={inputBase}
+                      style={{ backgroundColor: '#060e20', color: '#dae2fd' }}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <div
+                      className="absolute bottom-0 left-0 h-[2px] w-0 group-focus-within:w-full transition-all duration-300 rounded-full"
+                      style={{ backgroundColor: '#89ceff' }}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage className="text-xs mt-1" style={{ color: '#ffb4ab' }} />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm password</FormLabel>
-                  <FormControl>
-                    <Input
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <label
+                  className="block text-xs font-bold uppercase tracking-widest mb-2 ml-1"
+                  style={{ color: '#bec8d2' }}
+                >
+                  Confirm Password
+                </label>
+                <FormControl>
+                  <div className="relative group">
+                    <input
+                      {...field}
                       type="password"
                       placeholder="••••••••"
                       autoComplete="new-password"
-                      {...field}
+                      className={inputBase}
+                      style={{ backgroundColor: '#060e20', color: '#dae2fd' }}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
+                    <div
+                      className="absolute bottom-0 left-0 h-[2px] w-0 group-focus-within:w-full transition-all duration-300 rounded-full"
+                      style={{ backgroundColor: '#89ceff' }}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage className="text-xs mt-1" style={{ color: '#ffb4ab' }} />
+              </FormItem>
+            )}
+          />
+        </div>
 
-          <CardFooter className="flex flex-col gap-3">
-            <Button
-              type="submit"
-              className="w-full bg-sky-500 hover:bg-sky-600 text-white"
-              disabled={register.isPending}
-            >
-              {register.isPending ? 'Creating account…' : 'Create account'}
-            </Button>
-            <p className="text-sm text-muted-foreground text-center">
-              Already have an account?{' '}
-              <Link to="/login" className="text-sky-600 hover:underline font-medium">
-                Sign in
-              </Link>
-            </p>
-          </CardFooter>
-        </form>
-      </Form>
-    </Card>
+        {/* Server error */}
+        {serverError && (
+          <p className="text-xs" style={{ color: '#ffb4ab' }}>
+            {serverError}
+          </p>
+        )}
+
+        {/* Submit */}
+        <div className="pt-2">
+          <button
+            type="submit"
+            disabled={register.isPending}
+            className="w-full rounded-lg py-4 font-bold flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-60 cursor-pointer"
+            style={{ background: 'linear-gradient(to right, #89ceff, #0ea5e9)', color: '#00344d' }}
+          >
+            {register.isPending ? 'Creating Account...' : 'Create Account'}
+          </button>
+        </div>
+
+        {/* Login link */}
+        <p className="text-sm text-center pt-1" style={{ color: '#bec8d2' }}>
+          Already have an account?{' '}
+          <Link
+            to="/login"
+            className="font-bold hover:underline underline-offset-4"
+            style={{ color: '#89ceff' }}
+          >
+            Login
+          </Link>
+        </p>
+
+        {/* Terms */}
+        <p
+          className="text-[10px] text-center uppercase tracking-widest pt-2"
+          style={{ color: '#4a5568' }}
+        >
+          By registering you agree to our Terms &amp; Privacy Policy
+        </p>
+      </form>
+    </Form>
   )
 }
