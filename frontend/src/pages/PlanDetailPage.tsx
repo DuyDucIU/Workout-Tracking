@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { AxiosError } from 'axios'
 import { usePlan, useUpdatePlan, useDeletePlan } from '@/hooks/usePlans'
 import { useCreateSession } from '@/hooks/useSessions'
 import { SessionCard } from '@/components/plans/SessionCard'
@@ -71,6 +72,15 @@ export function PlanDetailPage() {
       {editingPlan ? (
         <div className="rounded-xl p-6 mb-8" style={{ backgroundColor: '#131b2e' }}>
           <h2 className="text-lg font-bold mb-4" style={{ color: '#dae2fd' }}>Edit Plan</h2>
+          {updatePlan.error && (
+            <div
+              className="rounded-lg p-3 text-sm mb-4 border"
+              style={{ backgroundColor: 'rgba(147,0,10,0.3)', color: '#ffdad6', borderColor: 'rgba(255,180,171,0.2)' }}
+            >
+              {(updatePlan.error as AxiosError<{ message?: string }>)?.response?.data?.message
+                ?? 'Failed to update plan. Please try again.'}
+            </div>
+          )}
           <PlanForm
             onSubmit={(values) => updatePlan.mutate(values, { onSuccess: () => setEditingPlan(false) })}
             isPending={updatePlan.isPending}

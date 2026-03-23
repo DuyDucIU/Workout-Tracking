@@ -3,6 +3,7 @@ import { WeightDisplay } from '@/components/shared/WeightDisplay'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useUpdateSessionExercise, useDeleteSessionExercise } from '@/hooks/useSessions'
 import type { SessionExerciseDto, UpdateSessionExerciseRequest } from '@/types/plan'
+import type { AxiosError } from 'axios'
 
 interface SessionExerciseRowProps {
   sessionExercise: SessionExerciseDto
@@ -15,17 +16,52 @@ export function SessionExerciseRow({ sessionExercise: se, planId }: SessionExerc
   const [reps, setReps] = useState(String(se.reps))
   const [weight, setWeight] = useState(se.weightKg != null ? String(se.weightKg) : '')
   const [notes, setNotes] = useState(se.notes ?? '')
+  const [error, setError] = useState<string | null>(null)
   const updateSe = useUpdateSessionExercise(planId)
   const deleteSe = useDeleteSessionExercise(planId)
 
+  const handleEdit = () => {
+    setError(null)
+    setEditing(true)
+  }
+
   const handleSave = () => {
+    setError(null)
+
+    const setsNum = Number(sets)
+    const repsNum = Number(reps)
+    const weightNum = weight !== '' ? Number(weight) : undefined
+
+    if (!sets || !Number.isInteger(setsNum) || setsNum < 1) {
+      setError('Sets must be a whole number of at least 1')
+      return
+    }
+    if (!reps || !Number.isInteger(repsNum) || repsNum < 1) {
+      setError('Reps must be a whole number of at least 1')
+      return
+    }
+    if (weightNum !== undefined && (isNaN(weightNum) || weightNum < 0)) {
+      setError('Weight cannot be negative')
+      return
+    }
+
     const data: UpdateSessionExerciseRequest = {
-      sets: Number(sets),
-      reps: Number(reps),
-      weightKg: weight ? Number(weight) : undefined,
+      sets: setsNum,
+      reps: repsNum,
+      weightKg: weightNum,
       notes: notes || undefined,
     }
-    updateSe.mutate({ id: se.id, data }, { onSuccess: () => setEditing(false) })
+
+    updateSe.mutate(
+      { id: se.id, data },
+      {
+        onSuccess: () => setEditing(false),
+        onError: (err: unknown) => {
+          const axiosErr = err as AxiosError<{ message?: string }>
+          setError(axiosErr.response?.data?.message ?? 'Failed to save. Please try again.')
+        },
+      }
+    )
   }
 
   if (editing) {
@@ -42,7 +78,9 @@ export function SessionExerciseRow({ sessionExercise: se, planId }: SessionExerc
                 <input
                   type="number"
                   value={vals[i]}
-                  onChange={e => setters[i](e.target.value)}
+                  min={i < 2 ? 1 : 0}
+                  step={i < 2 ? 1 : 0.5}
+                  onChange={e => { setters[i](e.target.value); setError(null) }}
                   className="w-full rounded-lg px-3 py-2 text-sm outline-none"
                   style={{ backgroundColor: '#060e20', color: '#dae2fd' }}
                 />
@@ -61,6 +99,9 @@ export function SessionExerciseRow({ sessionExercise: se, planId }: SessionExerc
             style={{ backgroundColor: '#060e20', color: '#dae2fd' }}
           />
         </div>
+        {error && (
+          <p className="text-xs" style={{ color: '#ffb4ab' }}>{error}</p>
+        )}
         <div className="flex gap-2">
           <button
             onClick={handleSave}
@@ -100,7 +141,7 @@ export function SessionExerciseRow({ sessionExercise: se, planId }: SessionExerc
 
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
-          onClick={() => setEditing(true)}
+          onClick={handleEdit}
           className="p-1.5 rounded-lg hover:bg-white/5"
           style={{ color: '#bec8d2' }}
         >

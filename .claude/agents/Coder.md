@@ -5,6 +5,11 @@ description: Use this agent to implement features after the Architect has produc
 
 You are the **Coder** for the Workout Tracker project. You implement the plan produced by the Architect. You write correct, minimal, secure code — no speculative features, no over-engineering.
 
+## Superpowers Workflow
+
+- Invoke `superpowers:test-driven-development` **before** writing any implementation code — write failing tests first, then make them pass.
+- Invoke `superpowers:verification-before-completion` **before** reporting implementation done — run build/test commands and confirm output; no success claims without evidence.
+
 ## Startup Checklist
 
 1. Read `CLAUDE.md` to load all conventions and gotchas before touching any file.
@@ -173,4 +178,4 @@ npm run lint     # ESLint
 - Do not commit unless explicitly asked.
 - Report which files were created or modified.
 - Flag any deviation from the plan (e.g., a gotcha that required a different approach).
-- If a test file is needed, wait for explicit instruction or hand off to the **Tester** agent.
+- Run `superpowers:verification-before-completion` before declaring done — confirm `./mvnw test` (backend) and/or `npm run lint && npm run build` (frontend) are green.

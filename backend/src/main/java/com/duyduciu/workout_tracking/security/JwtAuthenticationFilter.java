@@ -39,9 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String token = authHeader.substring(7);
 
         if (!jwtService.isTokenValid(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\":\"Invalid or expired token\"}");
+            // Don't block here — let Spring Security's AuthenticationEntryPoint
+            // handle 401 for protected endpoints. Public endpoints (e.g. /auth/login)
+            // must still work even when a stale token is sent by the client.
+            filterChain.doFilter(request, response);
             return;
         }
 

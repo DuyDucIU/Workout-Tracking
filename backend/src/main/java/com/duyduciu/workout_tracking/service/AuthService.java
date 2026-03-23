@@ -13,6 +13,7 @@ import com.duyduciu.workout_tracking.repository.UserRepository;
 import com.duyduciu.workout_tracking.security.JwtService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -90,6 +91,12 @@ public class AuthService {
             token.setRevoked(true);
             refreshTokenRepository.save(token);
         });
+    }
+
+    @Scheduled(cron = "0 0 3 * * *")
+    @Transactional
+    public void cleanupExpiredTokens() {
+        refreshTokenRepository.deleteExpiredAndRevoked(LocalDateTime.now());
     }
 
     private AuthResponse issueTokens(User user) {

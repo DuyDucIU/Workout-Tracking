@@ -5,6 +5,7 @@ import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useDeleteSession, useCreateSessionExercise } from '@/hooks/useSessions'
 import type { SessionDto } from '@/types/plan'
 import type { ExerciseDto } from '@/types/exercise'
+import type { AxiosError } from 'axios'
 
 const DAY_LABELS: Record<string, string> = {
   MONDAY: 'Mon', TUESDAY: 'Tue', WEDNESDAY: 'Wed', THURSDAY: 'Thu',
@@ -19,13 +20,21 @@ interface SessionCardProps {
 export function SessionCard({ session, planId }: SessionCardProps) {
   const [expanded, setExpanded] = useState(false)
   const [addingExercise, setAddingExercise] = useState(false)
+  const [addError, setAddError] = useState<string | null>(null)
   const deleteSession = useDeleteSession(planId)
   const addExercise = useCreateSessionExercise(planId)
 
   const handleSelectExercise = (exercise: ExerciseDto) => {
+    setAddError(null)
     addExercise.mutate(
       { sessionId: session.id, data: { exerciseId: exercise.id, sets: 3, reps: 10 } },
-      { onSuccess: () => setAddingExercise(false) }
+      {
+        onSuccess: () => setAddingExercise(false),
+        onError: (err: unknown) => {
+          const axiosErr = err as AxiosError<{ message?: string }>
+          setAddError(axiosErr.response?.data?.message ?? 'Failed to add exercise. Please try again.')
+        },
+      }
     )
   }
 
@@ -87,8 +96,11 @@ export function SessionCard({ session, planId }: SessionCardProps) {
           {addingExercise ? (
             <div className="pt-3">
               <ExercisePicker onSelect={handleSelectExercise} />
+              {addError && (
+                <p className="text-xs mt-2" style={{ color: '#ffb4ab' }}>{addError}</p>
+              )}
               <button
-                onClick={() => setAddingExercise(false)}
+                onClick={() => { setAddingExercise(false); setAddError(null) }}
                 className="mt-2 text-xs"
                 style={{ color: '#88929b' }}
               >
@@ -97,7 +109,7 @@ export function SessionCard({ session, planId }: SessionCardProps) {
             </div>
           ) : (
             <button
-              onClick={() => setAddingExercise(true)}
+              onClick={() => { setAddingExercise(true); setAddError(null) }}
               className="mt-3 flex items-center gap-2 text-sm font-semibold hover:opacity-70 transition-opacity"
               style={{ color: '#89ceff' }}
             >

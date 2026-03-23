@@ -5,6 +5,20 @@ Source of truth for conventions, structure, and commands.
 
 ---
 
+## Skill & Agent Workflow
+
+Superpowers skills govern all workflow (TDD, brainstorming, debugging, verification) and take priority over any conflicting policy in this file. CLAUDE.md governs project conventions (naming, paths, schema, security) — not process.
+
+Project-level sub-agent configs live in `.claude/agents/`:
+- `Architect.md` — planning, brainstorming before every plan
+- `Coder.md`     — implementation, TDD + verification required
+- `Tester.md`    — test writing, TDD-first, verification before merge
+- `Debugger.md`  — root-cause analysis, systematic-debugging required
+
+When updating workflow rules, update both this file AND the relevant agent file(s).
+
+---
+
 ## Git Workflow
 
 - Always create a branch before starting a feature or bug fix
@@ -12,6 +26,9 @@ Source of truth for conventions, structure, and commands.
   - Bug fix: `git checkout -b fix/<name>`
 - All work for that feature stays on that branch for the remainder of the session
 - Merge back to `main` only after end-to-end verification is complete
+- Run `superpowers:verification-before-completion` before pushing or opening a PR
+- Merge strategy: squash merge preferred — keeps `main` history clean
+- If using git worktrees, integrate changes back to the feature branch before pushing
 
 ---
 
@@ -45,6 +62,7 @@ Source of truth for conventions, structure, and commands.
 
 ```
 Workout-Tracking/
+├── .claude/agents/   Sub-agent configs (Architect, Coder, Tester, Debugger)
 ├── backend/          Spring Boot application
 ├── frontend/         React + Vite application
 ├── CLAUDE.md         This file — project conventions
@@ -79,9 +97,10 @@ Prefer **IntelliJ** — use the Run button on `WorkoutTrackingApplication`.
 
 When IntelliJ is not available, use the Maven wrapper from the `backend/` directory:
 ```bash
-./mvnw spring-boot:run      # start dev server (Windows: mvnw.cmd)
+./mvnw spring-boot:run      # start dev server
 ./mvnw test                 # run all tests
 ./mvnw package -DskipTests  # build JAR
+# On Windows PowerShell: use `mvnw.cmd spring-boot:run` (not `./mvnw`)
 ```
 
 ### application.properties — required local setup
@@ -167,7 +186,13 @@ Rules:
 
 ### Testing strategy
 
-Unit tests are written manually by the developer — do not generate test files unless explicitly asked.
+Follow `superpowers:test-driven-development` — write tests before implementation code. Tests are a required part of every feature delivery, not optional.
+
+- Backend: JUnit 5 unit tests for service layer + MockMvc integration tests for controllers
+- Backend test sources: `backend/src/test/java/com/duyduciu/workout_tracking/`
+- Unit test class: `<ClassName>Test.java` | Integration test: `<ClassName>IntegrationTest.java`
+- Frontend: ESLint (`npm run lint`) + `npm run build` are the minimum verification gates
+- Always run `./mvnw test` and confirm green before declaring a feature done
 
 ### Common gotchas — Backend
 - **JJWT 0.12.x**: use `.subject()`, `.issuedAt()`, `.expiration()` (not `set*()` variants); parse with `Jwts.parser().verifyWith(key).build().parseSignedClaims(token)`

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import type { AxiosError } from 'axios'
 import { useCreatePlan } from '@/hooks/usePlans'
 import { PlanForm } from '@/components/plans/PlanForm'
 
@@ -29,7 +30,8 @@ export function CreatePlanPage() {
             className="rounded-lg p-3 text-sm mb-6 border"
             style={{ backgroundColor: 'rgba(147,0,10,0.3)', color: '#ffdad6', borderColor: 'rgba(255,180,171,0.2)' }}
           >
-            Failed to create plan. Please try again.
+            {(createPlan.error as AxiosError<{ message?: string }>)?.response?.data?.message
+              ?? 'Failed to create plan. Please try again.'}
           </div>
         )}
 
