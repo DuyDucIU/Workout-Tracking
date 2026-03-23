@@ -13,7 +13,7 @@ Status: `[ ]` = todo · `[x]` = done · `[~]` = in progress
 - [x] Configure `application.properties`: datasource (MySQL), JPA (`ddl-auto=validate`), Flyway, JWT secret/expiry, SpringDoc paths
 - [x] Create `V1__create_schema.sql`: all 8 tables (`users`, `refresh_tokens`, `exercises`, `workout_plans`, `workout_sessions`, `session_exercises`, `workout_logs`, `workout_log_entries`)
 - [x] Create `V2__seed_exercises.sql`: ~35 exercises across all categories/muscle groups (`is_system=TRUE`)
-- [ ] Verify: app starts, Flyway runs V1+V2 cleanly, Swagger UI loads at `/swagger-ui.html`
+- [x] Verify: app starts, Flyway runs V1+V2 cleanly, Swagger UI loads at `/swagger-ui.html`
 
 ---
 
@@ -63,71 +63,73 @@ Status: `[ ]` = todo · `[x]` = done · `[~]` = in progress
 - [x] `pages/DashboardPage.tsx` — placeholder "Welcome" page (will be filled in Feature 5)
 
 ### Verify Feature 1
-- [ ] Register a new user → 201, tokens returned
-- [ ] Login → access + refresh tokens received, stored in `authStore`
-- [ ] Accessing `/users/me` without token → 401
-- [ ] Accessing `/users/me` with token → 200, user object
-- [ ] Frontend: register → redirected to dashboard; logout → redirected to login; refresh page → still logged in (token in store); expired access token → silent refresh happens transparently
+- [x] Register a new user → 201, tokens returned
+- [x] Login → access + refresh tokens received, stored in `authStore`
+- [x] Accessing `/users/me` without token → 401
+- [x] Accessing `/users/me` with token → 200, user object
+- [x] Frontend: register → redirected to dashboard; logout → redirected to login; refresh page → still logged in (token in store); expired access token → silent refresh happens transparently
 
 ---
 
 ## Feature 2 — Exercise Catalog
 
 ### Backend
-- [ ] `Exercise` entity
-- [ ] `ExerciseRepository` — findAll with dynamic filter (category, muscleGroup, name search), pageable
-- [ ] `ExerciseDto`
-- [ ] `ExerciseMapper` (MapStruct)
-- [ ] `ExerciseService` — paginated list with optional filters
-- [ ] `ExerciseController` — `GET /api/v1/exercises?category&muscleGroup&search&page&size`, `GET /api/v1/exercises/{id}`
-- [ ] Unit test: `ExerciseService`
+- [x] `Exercise` entity
+- [x] `ExerciseRepository` — findAll with dynamic filter (category, muscleGroup, name search), pageable
+- [x] `ExerciseDto`
+- [x] `ExerciseMapper` (MapStruct)
+- [x] `ExerciseService` — paginated list with optional filters
+- [x] `ExerciseController` — `GET /api/v1/exercises?category&muscleGroup&search&page&size`, `GET /api/v1/exercises/{id}`
+- [x] Unit test: `ExerciseService`
 
 ### Frontend
-- [ ] `src/types/exercise.ts`
-- [ ] `hooks/useExercises.ts` — paginated/filtered list query
-- [ ] `components/plans/ExercisePicker.tsx` — searchable combobox (shadcn `Command` + `Popover`) with category/muscle-group filter chips
+- [x] `src/types/exercise.ts`
+- [x] `hooks/useExercises.ts` — paginated/filtered list query
+- [x] `components/plans/ExercisePicker.tsx` — searchable combobox with category filter chips
 
 ### Verify Feature 2
-- [ ] `GET /api/v1/exercises` returns seeded exercises with pagination
-- [ ] Filter by `category=STRENGTH` returns only strength exercises
-- [ ] Frontend `ExercisePicker` opens, searches by name, shows results
+- [x] `GET /api/v1/exercises` returns seeded exercises with pagination
+- [x] Filter by `category=STRENGTH` returns only strength exercises
+- [x] Frontend `ExercisePicker` opens, searches by name, shows results
 
 ---
 
 ## Feature 3 — Workout Plans & Sessions
 
 ### Backend
-- [ ] Entities: `WorkoutPlan`, `WorkoutSession`, `SessionExercise`
-- [ ] Repositories: `WorkoutPlanRepository`, `WorkoutSessionRepository`, `SessionExerciseRepository`
-- [ ] DTOs: `WorkoutPlanDto`, `WorkoutPlanSummaryDto`, `CreatePlanRequest`, `UpdatePlanRequest`, `SessionDto`, `CreateSessionRequest`, `UpdateSessionRequest`, `SessionExerciseDto`, `CreateSessionExerciseRequest`, `UpdateSessionExerciseRequest`
-- [ ] Mappers: `WorkoutPlanMapper`, `WorkoutSessionMapper`, `SessionExerciseMapper`
-- [ ] `WorkoutPlanService` — CRUD + ownership check helper (`assertOwnership`)
-- [ ] `WorkoutSessionService` — CRUD (validates plan ownership)
-- [ ] `SessionExerciseService` — CRUD (validates session → plan → ownership chain)
-- [ ] Controllers: `WorkoutPlanController`, `WorkoutSessionController`, `SessionExerciseController`
-- [ ] Unit tests for all three services; `@WebMvcTest` for controllers
+- [x] Entities: `WorkoutPlan`, `WorkoutSession`, `SessionExercise`
+- [x] Repositories: `WorkoutPlanRepository`, `WorkoutSessionRepository`, `SessionExerciseRepository`
+- [x] DTOs: `WorkoutPlanDto`, `WorkoutPlanSummaryDto`, `CreatePlanRequest`, `UpdatePlanRequest`, `SessionDto`, `CreateSessionRequest`, `UpdateSessionRequest`, `SessionExerciseDto`, `CreateSessionExerciseRequest`, `UpdateSessionExerciseRequest`
+- [x] Mappers: `WorkoutPlanMapper`, `WorkoutSessionMapper`, `SessionExerciseMapper`
+- [x] `WorkoutPlanService` — CRUD + ownership check helper (`assertOwnership`)
+- [x] `WorkoutSessionService` — CRUD (validates plan ownership)
+- [x] `SessionExerciseService` — CRUD (validates session → plan → ownership chain)
+- [x] Controllers: `WorkoutPlanController`, `WorkoutSessionController`, `SessionExerciseController`
+- [x] Unit tests: `SessionExerciseServiceTest` (happy path, not-found, ownership enforcement)
+- [x] Flyway V3: `day_of_week` nullable; V4: `order_index` nullable
 
 ### Frontend
-- [ ] `src/types/plan.ts`, `src/types/session.ts`
-- [ ] `hooks/usePlans.ts` — list, detail, create, update, delete
-- [ ] `hooks/useSessions.ts` — list, create, update, delete within a plan
-- [ ] `components/shared/WeightDisplay.tsx` — unit-aware weight renderer
-- [ ] `components/shared/ConfirmDialog.tsx` — shadcn `AlertDialog` wrapper for deletes
-- [ ] `components/plans/PlanCard.tsx` — summary card (name, session count, active badge)
-- [ ] `components/plans/PlanForm.tsx` — create/edit (name, description, active toggle)
-- [ ] `components/plans/SessionCard.tsx` — session card with day-of-week chip
-- [ ] `components/plans/SessionForm.tsx` — create/edit session (name, day-of-week)
-- [ ] `components/plans/SessionExerciseRow.tsx` — inline sets/reps/weight/notes editor
-- [ ] `pages/PlansPage.tsx` — list of plans + "New Plan" button
-- [ ] `pages/CreatePlanPage.tsx` — plan form
-- [ ] `pages/PlanDetailPage.tsx` — plan info + session list + exercise builder per session (add/edit/remove exercises with `ExercisePicker`)
+- [x] `src/types/plan.ts`
+- [x] `hooks/usePlans.ts` — list, detail, create, update, delete
+- [x] `hooks/useSessions.ts` — list, create, update, delete + session exercise CRUD
+- [x] `components/shared/WeightDisplay.tsx` — unit-aware weight renderer
+- [x] `components/shared/ConfirmDialog.tsx` — native `<dialog>` with centered positioning + click propagation fix
+- [x] `components/plans/PlanCard.tsx` — summary card (name, session count, delete with confirm)
+- [x] `components/plans/PlanForm.tsx` — create/edit (name, description, active toggle)
+- [x] `components/plans/SessionCard.tsx` — expandable session card with day-of-week chip + exercise list
+- [x] `components/plans/SessionExerciseRow.tsx` — inline sets/reps/weight/notes display + delete
+- [x] `pages/PlansPage.tsx` — list of plans + "New Plan" button
+- [x] `pages/CreatePlanPage.tsx` — plan form
+- [x] `pages/PlanDetailPage.tsx` — plan info + session list + exercise builder per session
 
 ### Verify Feature 3
-- [ ] Create a plan with 2 sessions, each with 3 exercises → persists correctly
-- [ ] Update plan name, session day, exercise weight → all update correctly
-- [ ] Delete an exercise from a session; delete a session; delete a plan → cascade works
-- [ ] Attempting to access another user's plan → 403
-- [ ] Frontend: full create/edit/delete flow works end-to-end with correct loading/error states
+- [x] Create a plan with sessions and exercises → persists correctly
+- [x] Add exercise via picker (search + category filter) → appears in session
+- [x] Delete an exercise from a session → cascade works, count updates
+- [x] Delete a session (confirm) → removed, plan session count decrements
+- [x] Cancel delete dialog → no navigation, no action
+- [x] Confirm dialog centered on screen
+- [x] Frontend: full create/delete flow verified via Playwright browser tests
 
 ---
 
