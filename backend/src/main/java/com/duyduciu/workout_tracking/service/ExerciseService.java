@@ -30,7 +30,8 @@ public class ExerciseService {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("muscleGroup"), muscleGroup));
         }
         if (search != null && !search.isBlank()) {
-            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), "%" + search.toLowerCase() + "%"));
+            String escaped = search.toLowerCase().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), "%" + escaped + "%", '\\'));
         }
 
         return exerciseRepository.findAll(spec, pageable).map(exerciseMapper::toDto);

@@ -73,7 +73,7 @@ public class WorkoutPlanService {
                 .orElseThrow(() -> new ResourceNotFoundException("Workout plan not found"));
     }
 
-    void assertOwnership(Long resourceUserId, Long currentUserId) {
+    private void assertOwnership(Long resourceUserId, Long currentUserId) {
         if (!resourceUserId.equals(currentUserId)) {
             throw new AccessDeniedException("You do not have access to this resource");
         }
@@ -83,7 +83,7 @@ public class WorkoutPlanService {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
-    Long getCurrentUserId() {
+    private Long getCurrentUserId() {
         return userRepo.findByEmail(getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"))
                 .getId();

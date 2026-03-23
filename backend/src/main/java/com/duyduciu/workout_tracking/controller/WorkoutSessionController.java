@@ -39,7 +39,7 @@ public class WorkoutSessionController {
 
     @PatchMapping("/api/v1/sessions/{id}")
     @Operation(summary = "Update a session")
-    public ResponseEntity<SessionDto> update(@PathVariable Long id, @RequestBody UpdateSessionRequest request) {
+    public ResponseEntity<SessionDto> update(@PathVariable Long id, @Valid @RequestBody UpdateSessionRequest request) {
         return ResponseEntity.ok(sessionService.update(id, request));
     }
 

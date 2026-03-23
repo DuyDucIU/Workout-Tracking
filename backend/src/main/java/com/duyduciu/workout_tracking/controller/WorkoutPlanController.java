@@ -40,7 +40,7 @@ public class WorkoutPlanController {
 
     @PatchMapping("/{id}")
     @Operation(summary = "Update a workout plan")
-    public ResponseEntity<WorkoutPlanDto> update(@PathVariable Long id, @RequestBody UpdatePlanRequest request) {
+    public ResponseEntity<WorkoutPlanDto> update(@PathVariable Long id, @Valid @RequestBody UpdatePlanRequest request) {
         return ResponseEntity.ok(planService.update(id, request));
     }
 

@@ -26,7 +26,7 @@ public class SessionExerciseController {
 
     @PatchMapping("/api/v1/session-exercises/{id}")
     @Operation(summary = "Update a session exercise")
-    public ResponseEntity<SessionExerciseDto> update(@PathVariable Long id, @RequestBody UpdateSessionExerciseRequest request) {
+    public ResponseEntity<SessionExerciseDto> update(@PathVariable Long id, @Valid @RequestBody UpdateSessionExerciseRequest request) {
         return ResponseEntity.ok(seService.update(id, request));
     }
 

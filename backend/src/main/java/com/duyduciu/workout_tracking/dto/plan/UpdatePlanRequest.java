@@ -1,2 +1,8 @@
 package com.duyduciu.workout_tracking.dto.plan;
-public record UpdatePlanRequest(String name, String description, Boolean isActive) {}
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+public record UpdatePlanRequest(
+        @NotBlank @Size(max = 100) String name,
+        String description,
+        Boolean isActive
+) {}
