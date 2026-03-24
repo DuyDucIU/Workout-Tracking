@@ -31,11 +31,11 @@
 | user | User (ManyToOne LAZY) | FK, not null, CASCADE delete |
 | plan | WorkoutPlan (ManyToOne LAZY) | FK, nullable (SET NULL on plan delete) |
 | session | WorkoutSession (ManyToOne LAZY) | FK, nullable (SET NULL on session delete) |
-| planNameSnap | String | Snapshot of plan name at log creation |
-| sessionNameSnap | String | Snapshot of session name at log creation |
-| completedDate | LocalDate | Date the workout was completed |
+| planNameSnap | String | Nullable in DB, always populated on creation — snapshot of plan name |
+| sessionNameSnap | String | Nullable in DB, always populated on creation — snapshot of session name |
+| completedDate | LocalDate | NOT NULL — date the workout was completed |
 | notes | String | Nullable |
-| createdAt | LocalDateTime | @PrePersist, immutable |
+| createdAt | LocalDateTime | @PrePersist, @Column(updatable = false) — immutable |
 | entries | List\<WorkoutLogEntry\> | OneToMany, CASCADE ALL, orphanRemoval |
 
 #### WorkoutLogEntry
@@ -54,8 +54,10 @@
 ### DTOs
 
 **Request:**
-- `CreateWorkoutLogRequest` — record with: `planId` (Long, @NotNull), `sessionId` (Long, @NotNull), `completedDate` (LocalDate, @NotNull), `notes` (String, nullable), `entries` (List\<CreateLogEntryRequest\>, @NotEmpty)
-- `CreateLogEntryRequest` — record with: `exerciseId` (Long, @NotNull), `actualSets` (Integer, @NotNull, @Min(1)), `actualReps` (Integer, @NotNull, @Min(1)), `actualWeightKg` (BigDecimal, nullable), `notes` (String, nullable)
+- `CreateWorkoutLogRequest` — record with: `planId` (Long, @NotNull), `sessionId` (Long, @NotNull), `completedDate` (LocalDate, @NotNull), `notes` (String, @Size(max = 2000), nullable), `entries` (List\<CreateLogEntryRequest\>, @NotEmpty)
+- `CreateLogEntryRequest` — record with: `exerciseId` (Long, @NotNull), `actualSets` (Integer, @NotNull, @Min(1), @Max(100)), `actualReps` (Integer, @NotNull, @Min(1), @Max(1000)), `actualWeightKg` (BigDecimal, nullable), `notes` (String, @Size(max = 500), nullable)
+
+**DTO package:** `dto/log/` — all log-related DTOs live here
 
 **Response:**
 - `WorkoutLogDto` — id, planId, sessionId, planNameSnap, sessionNameSnap, completedDate, notes, createdAt, entries (List\<WorkoutLogEntryDto\>)
@@ -82,7 +84,7 @@
 2. Fetch plan -> assertOwnership(plan.user.id, userId)
 3. Fetch session -> verify session belongs to plan (session.plan.id == plan.id)
 4. Build WorkoutLog entity, snapshot plan.getName() + session.getName()
-5. Loop entries: fetch exercise by ID, snapshot exercise.getName(), build WorkoutLogEntry
+5. Batch-fetch all exercises by IDs (`exerciseRepository.findAllById(exerciseIds)`), build ID->Exercise map, then loop entries: lookup exercise from map, snapshot exercise.getName(), build WorkoutLogEntry
 6. Save log (cascade saves entries)
 7. Return mapped DTO
 
@@ -101,16 +103,16 @@
 
 ### Mappers
 
-- `WorkoutLogMapper` — uses WorkoutLogEntryMapper; toDto (with entries), toSummaryDto (with computed entryCount)
-- `WorkoutLogEntryMapper` — toDto; maps exercise.id -> exerciseId (nullable)
+- `WorkoutLogMapper` (`mapper/WorkoutLogMapper.java`) — `@Mapper(componentModel = "spring", uses = {WorkoutLogEntryMapper.class})`; toDto (with entries), toSummaryDto (with computed entryCount)
+- `WorkoutLogEntryMapper` (`mapper/WorkoutLogEntryMapper.java`) — `@Mapper(componentModel = "spring")`; toDto; maps exercise.id -> exerciseId (nullable)
 
 ### Repositories
 
 - `WorkoutLogRepository` extends JpaRepository
-  - `Page<WorkoutLog> findByUserIdOrderByCompletedDateDescCreatedAtDesc(Long userId, Pageable pageable)`
-  - `Page<WorkoutLog> findByUserIdAndCompletedDateBetweenOrderByCompletedDateDescCreatedAtDesc(Long userId, LocalDate from, LocalDate to, Pageable pageable)`
+  - `Page<WorkoutLog> findByUserId(Long userId, Pageable pageable)` — sorting handled via `PageRequest.of(page, size, Sort.by(Sort.Order.desc("completedDate"), Sort.Order.desc("createdAt")))` in service
+  - `Page<WorkoutLog> findByUserIdAndCompletedDateBetween(Long userId, LocalDate from, LocalDate to, Pageable pageable)` — same sort strategy via Pageable
   - `@Query` with LEFT JOIN FETCH entries for getById
-- `WorkoutLogEntryRepository` extends JpaRepository (minimal — entries accessed via log)
+- `WorkoutLogEntryRepository` extends JpaRepository (minimal — entries accessed via log, included for consistency with existing pattern)
 
 ### Tests
 
@@ -231,3 +233,5 @@ interface CreateLogEntryRequest {
 - Error handling: Axios error extraction pattern (consistent with existing components)
 - Loading states: disable submit during mutation, show LoadingSpinner for queries
 - Empty states: friendly message when no plans exist (link to create plan), when no logs exist
+- Edge case: if selected plan has zero sessions, disable session step and show message
+- Swagger annotations: `@Tag`, `@SecurityRequirement(name = "bearerAuth")`, `@Operation` on all controller methods (consistent with existing controllers)
