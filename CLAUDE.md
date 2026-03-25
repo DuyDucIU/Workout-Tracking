@@ -127,6 +127,9 @@ Location: `backend/src/main/resources/db/migration/`
 |------|---------|
 | `V1__create_schema.sql` | All 8 tables |
 | `V2__seed_exercises.sql` | ~35 seeded system exercises |
+| `V3__alter_workout_sessions_day_of_week_nullable.sql` | Make `day_of_week` nullable |
+| `V4__alter_order_index_nullable.sql` | Make `order_index` nullable |
+| `V5__add_indexes.sql` | Add `idx_se_exercise_id` on `session_exercises(exercise_id)` |
 
 Rules:
 - Never edit an existing migration file — always create a new `V{n}__description.sql`
@@ -227,6 +230,7 @@ src/
 │   ├── authStore.ts     accessToken, user (id, email, username, unitPref), setAuth, clearAuth
 │   └── themeStore.ts    'light' | 'dark', toggleTheme — persisted to localStorage
 ├── types/               TypeScript interfaces mirroring backend DTOs
+│   └── common.ts        Shared types (e.g. Page<T> wrapper)
 ├── hooks/               TanStack Query hooks (one file per domain)
 ├── components/
 │   ├── ui/              shadcn generated — do not hand-edit
@@ -234,7 +238,6 @@ src/
 │   ├── auth/            LoginForm, RegisterForm
 │   ├── plans/           PlanCard, PlanForm, SessionCard, SessionForm, ExercisePicker, SessionExerciseRow
 │   ├── logs/            LogEntryForm, LogHistoryItem, ExerciseResultRow
-│   ├── reports/         ProgressChart, SummaryStats, PersonalRecords
 │   └── shared/          ThemeToggle, LoadingSpinner, ErrorMessage, ConfirmDialog, WeightDisplay
 ├── pages/               One file per route
 └── router/
@@ -253,8 +256,8 @@ src/
 | `/plans/:id` | `PlanDetailPage` | Protected |
 | `/log` | `LogWorkoutPage` | Protected |
 | `/history` | `LogHistoryPage` | Protected |
-| `/reports` | `ReportsPage` | Protected |
-| `/profile` | `ProfilePage` | Protected |
+| `/reports` | `ReportsPage` | Protected — not yet built (Feature 5) |
+| `/profile` | `ProfilePage` | Protected — not yet built (Feature 6) |
 
 ### Naming conventions — Frontend
 
