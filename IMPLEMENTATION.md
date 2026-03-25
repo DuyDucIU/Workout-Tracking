@@ -136,29 +136,29 @@ Status: `[ ]` = todo · `[x]` = done · `[~]` = in progress
 ## Feature 4 — Workout Logging
 
 ### Backend
-- [ ] Entities: `WorkoutLog`, `WorkoutLogEntry` (with snapshot fields for plan/session/exercise names)
-- [ ] `WorkoutLogRepository` — `findByUserIdAndCompletedDateBetween` (pageable)
-- [ ] `WorkoutLogEntryRepository`
-- [ ] DTOs: `WorkoutLogDto`, `WorkoutLogSummaryDto`, `CreateWorkoutLogRequest`, `CreateLogEntryRequest`
-- [ ] `WorkoutLogMapper`
-- [ ] `WorkoutLogService` — create log + entries in single transaction, snapshot names at creation time, ownership check
-- [ ] `WorkoutLogController` — `GET/POST /api/v1/logs`, `GET/DELETE /api/v1/logs/{id}`
-- [ ] Unit test: `WorkoutLogService`; `@DataJpaTest` for date-range query
+- [x] Entities: `WorkoutLog`, `WorkoutLogEntry` (with snapshot fields for plan/session/exercise names)
+- [x] `WorkoutLogRepository` — `findByUserIdAndCompletedDateBetween` (pageable)
+- [x] `WorkoutLogEntryRepository`
+- [x] DTOs: `WorkoutLogDto`, `WorkoutLogSummaryDto`, `CreateWorkoutLogRequest`, `CreateLogEntryRequest`
+- [x] `WorkoutLogMapper`, `WorkoutLogEntryMapper` (null-safe for SET NULL cascades)
+- [x] `WorkoutLogService` — create log + entries in single transaction, snapshot names at creation time, ownership check
+- [x] `WorkoutLogController` — `GET/POST /api/v1/logs`, `GET/DELETE /api/v1/logs/{id}`
+- [x] Unit test: `WorkoutLogServiceTest` (10 tests: create, getById, delete, list — happy path + error cases)
 
 ### Frontend
-- [ ] `src/types/log.ts`
-- [ ] `hooks/useLogs.ts` — create log mutation, paginated history query
-- [ ] `components/logs/ExerciseResultRow.tsx` — actual sets/reps/weight input per exercise
-- [ ] `components/logs/LogEntryForm.tsx` — select plan → session → fill in actuals per exercise (pre-populate with plan targets as defaults)
-- [ ] `components/logs/LogHistoryItem.tsx` — card: date, session name, exercises summary
-- [ ] `pages/LogWorkoutPage.tsx` — guided log creation (plan/session picker → exercise results form)
-- [ ] `pages/LogHistoryPage.tsx` — paginated history list with date range filter
+- [x] `src/types/log.ts`
+- [x] `hooks/useLogs.ts` — create log mutation, paginated history query
+- [x] `components/logs/ExerciseResultRow.tsx` — actual sets/reps/weight input per exercise
+- [x] `components/logs/LogEntryForm.tsx` — select plan → session → fill in actuals per exercise (pre-populate with plan targets as defaults)
+- [x] `components/logs/LogHistoryItem.tsx` — card: date, session name, exercises summary
+- [x] `pages/LogWorkoutPage.tsx` — guided log creation (plan/session picker → exercise results form)
+- [x] `pages/LogHistoryPage.tsx` — paginated history list with date range filter
 
 ### Verify Feature 4
-- [ ] Log a completed workout session with all exercises → saved correctly
+- [x] Log a completed workout session with all exercises → saved correctly
 - [ ] Verify snapshot: delete the plan → log still shows plan name from snapshot
-- [ ] History list shows logs sorted by date, paginated
-- [ ] Frontend: log flow works end-to-end; history renders correctly
+- [x] History list shows logs sorted by date, paginated
+- [x] Frontend: log flow works end-to-end; history renders correctly
 
 ---
 

@@ -2,9 +2,10 @@ import { NavLink } from 'react-router-dom'
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: 'dashboard', end: true },
-  { to: '/plans', label: 'Workouts', icon: 'fitness_center' },
-  { to: '/log', label: 'Programs', icon: 'calendar_month' },
-  { to: '/reports', label: 'Analytics', icon: 'monitoring' },
+  { to: '/plans', label: 'Plans', icon: 'fitness_center' },
+  { to: '/log', label: 'Log Workout', icon: 'edit_note' },
+  { to: '/history', label: 'History', icon: 'history' },
+  { to: '/reports', label: 'Reports', icon: 'monitoring' },
   { to: '/profile', label: 'Settings', icon: 'settings' },
 ]
 
