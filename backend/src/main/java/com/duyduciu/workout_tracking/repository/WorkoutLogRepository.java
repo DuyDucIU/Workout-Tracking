@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface WorkoutLogRepository extends JpaRepository<WorkoutLog, Long> {
@@ -18,4 +19,9 @@ public interface WorkoutLogRepository extends JpaRepository<WorkoutLog, Long> {
 
     @Query("SELECT l FROM WorkoutLog l LEFT JOIN FETCH l.entries WHERE l.id = :id")
     Optional<WorkoutLog> findByIdWithEntries(@Param("id") Long id);
+
+    @Query("SELECT DISTINCT l.completedDate FROM WorkoutLog l WHERE l.user.id = :userId ORDER BY l.completedDate DESC")
+    List<LocalDate> findAllCompletedDatesByUserId(@Param("userId") Long userId);
+
+    long countByUserId(Long userId);
 }

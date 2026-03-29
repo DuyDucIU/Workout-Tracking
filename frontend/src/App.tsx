@@ -9,6 +9,7 @@ import { CreatePlanPage } from '@/pages/CreatePlanPage'
 import { PlanDetailPage } from '@/pages/PlanDetailPage'
 import { LogWorkoutPage } from '@/pages/LogWorkoutPage'
 import { LogHistoryPage } from '@/pages/LogHistoryPage'
+import { ReportsPage } from '@/pages/ReportsPage'
 
 function PlaceholderPage({ title }: { title: string }) {
   return (
@@ -37,7 +38,7 @@ export default function App() {
           <Route path="/plans/:id" element={<PlanDetailPage />} />
           <Route path="/log" element={<LogWorkoutPage />} />
           <Route path="/history" element={<LogHistoryPage />} />
-          <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
+          <Route path="/reports" element={<ReportsPage />} />
           <Route path="/profile" element={<PlaceholderPage title="Profile" />} />
         </Route>
       </Route>
