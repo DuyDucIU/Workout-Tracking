@@ -17,6 +17,19 @@ Project-level sub-agent configs live in `.claude/agents/`:
 
 When updating workflow rules, update both this file AND the relevant agent file(s).
 
+### MANDATORY — Before starting any feature or fix
+
+> **Do not write a single line of code until all steps below are done.**
+
+1. **Create a branch** — `git checkout -b feature/<name>` or `fix/<name>`. Never work on `main`.
+2. **Invoke `superpowers:brainstorming`** — explore requirements and design alternatives.
+3. **Invoke `superpowers:writing-plans`** — produce a structured plan and align with the user before coding.
+4. **Invoke `superpowers:executing-plans`** — the Coder agent will invoke `superpowers:test-driven-development` internally (tests before implementation).
+5. **Invoke `superpowers:verification-before-completion`** — run tests + build + code review before merging.
+6. **Squash merge to `main`** — `git merge --squash feature/<name>`.
+
+Skipping any step is not allowed, even if the feature seems simple or the spec is already clear.
+
 ---
 
 ## Git Workflow
