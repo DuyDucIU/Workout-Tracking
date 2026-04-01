@@ -102,10 +102,10 @@ Detailed docs in `.claude/docs/` — consult when working on the relevant area:
 
 | File | Topic |
 |------|-------|
-| [database.md](.claude/docs/database.md) | Schema (8 tables), Flyway migrations, DB config |
-| [api.md](.claude/docs/api.md) | API conventions, endpoints, status codes, error shape |
-| [security.md](.claude/docs/security.md) | JWT flow, auth rules, ownership, refresh tokens, silent refresh |
-| [backend.md](.claude/docs/backend.md) | Package structure, naming conventions, testing, BE gotchas |
-| [frontend.md](.claude/docs/frontend.md) | Source structure, naming conventions, routes, state management, forms |
-| [ui-ux.md](.claude/docs/ui-ux.md) | Theme, color palette, WeightDisplay, shadcn, icons |
-| [architectural_patterns.md](.claude/docs/architectural_patterns.md) | Cross-cutting design patterns and conventions |
+| [database.md](.claude/docs/database.md) | Schema (8 tables), Flyway migrations, DB config — when adding entities or migrations |
+| [api.md](.claude/docs/api.md) | API conventions, endpoints, status codes, error shape — when writing controllers or FE hooks |
+| [security.md](.claude/docs/security.md) | JWT flow, auth rules, ownership, refresh tokens, silent refresh — when touching auth or protected endpoints |
+| [backend.md](.claude/docs/backend.md) | Package structure, naming conventions, testing, BE gotchas — when writing any backend code |
+| [frontend.md](.claude/docs/frontend.md) | Source structure, naming conventions, routes, state management, forms — when writing any frontend code |
+| [ui-ux.md](.claude/docs/ui-ux.md) | Theme, color palette, WeightDisplay, shadcn, icons — when building UI components or pages |
+| [architectural_patterns.md](.claude/docs/architectural_patterns.md) | Cross-cutting design patterns and conventions — when designing a new feature or reviewing code |

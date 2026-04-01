@@ -6,6 +6,7 @@
 
 - Feature: `feature/<name>` | Bug fix: `fix/<name>`
 - All work stays on the feature branch for the session
+- Before merging, update relevant `.claude/docs/` files if new patterns, gotchas, or conventions were discovered during the feature
 - Merge back to `main` only after end-to-end verification: `./mvnw test` (backend) + `npm run lint && npm run build` (frontend) must be green
 - Squash merge preferred — keeps `main` history clean
 - If using git worktrees, integrate changes back to the feature branch before pushing
